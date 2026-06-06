@@ -139,12 +139,6 @@ I am going to try 5 chunks at first and maybe add some more if answers are poor.
      "I'll give Claude my Chunking Strategy section and ask it to implement chunk_text()
      with my specified chunk size and overlap" is a plan. -->
 
-     
-
-     
-
-
-
 **Milestone 3 — Ingestion and chunking:**
 
      Going to use AI to write the chunking code based on my chunk size and overlap. Will need a paragraph breaking chunker + fixed size chunker.

@@ -13,7 +13,11 @@
      Why is this knowledge valuable, and why is it hard to find through official channels?
      Example: "Student reviews of CS professors at [university] — useful because official
      course descriptions don't reflect teaching style, exam difficulty, or workload." -->
-
+I'm choosing a CS Course selection and survival guide for Haverford College. I want to span the 
+CS course lottery, difficulty of courses, professor course structure and grading policies. This sort of 
+knowledge is mostly informal. You find out which courses are tough by word of mouth and you only get 
+grading info and course insights if you enroll and get a syllabus. I don't think I was aware of the 
+CS course lottery until I got to campus; even though it is on the registrar's website.
 ---
 
 ## Document Sources
@@ -78,10 +82,14 @@ Note about document ingestion: I copied in the documents into txt files and clea
      Consider: context length limits, multilingual support, accuracy on domain-specific text,
      latency, and local vs. API-hosted. -->
 
-**Model used:**
+**Embedding model:**
+all-MiniLM-L6-v2 from sentence-transformers should be fine
+
+**Top-k:**
+I am going to try 5 chunks at first and maybe add some more if answers are poor. Too many adds irrelavent info.
 
 **Production tradeoff reflection:**
-
+(Had claude help) There are better models for student informal language and slang like text-embedding-3-large or Voyage/Cohere. Another embedding model could be useful for the long requirements and course lottery pages. 
 ---
 
 ## Grounded Generation
@@ -147,8 +155,16 @@ Note about document ingestion: I copied in the documents into txt files and clea
      Answer both questions with at least 2–3 sentences each. -->
 
 **One way the spec helped you during implementation:**
+It seems Claude really understood the planning.md well and
+was able to give a decent implementation.
 
 **One way your implementation diverged from the spec, and why:**
+
+I had Claude generate ingest.py, and it found that one of the files
+that I had decided to paragraph split became a big chunk 
+because spacing was not present for some reason
+so I told Claude that if a paragraph is too big then we will use
+the fixed-length chunker.
 
 ---
 
@@ -166,8 +182,12 @@ Note about document ingestion: I copied in the documents into txt files and clea
 **Instance 1**
 
 - *What I gave the AI:*
+Planning.md, Can you use planning.md as a basis to write a script to load all the documents from docs, define a method for paragraph chunking, define a method for fixed-length chunking as per parameters in planning.md? Do the previous as functions, then make the appropriate calls to paragraph chunk and fixed-length chunk respectively as define.
+
 - *What it produced:*
+Wrote the chunking based on paragraph + length
 - *What I changed or overrode:*
+It suggested that we add a extra strategy that if we have too large of a paragraph
 
 **Instance 2**
 
