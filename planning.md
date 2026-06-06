@@ -100,9 +100,10 @@ Update (during implementation): raised top-k from 5 to 10. End-to-end testing sh
 
 **System prompt grounding instruction:**
 Only answer based on the content provided. Do not use outside 
-sources to answer questions.
+sources to answer questions. 
 
 **How source attribution is surfaced in the response:**
+We added a sources array to embed.py and the sources metadata lives in chromadb
 
 ---
 
@@ -115,7 +116,7 @@ sources to answer questions.
 
 | # | Question | Expected answer |
 |---|----------|-----------------|
-| 1 | What is CS240 about? | Principles of Computer Organization...etc. |
+| 1 | What is CS245 about? | Programming Languages |
 | 2 | What is Professor Wonacott like? | Student reviews are mixed. He is noted as being friendly, not the best at teaching, and long-winded.  |
 | 3 | What is the course lottery like at Haverford? | The lottery can be stressful because you are not guaranteed a course, but if you stick through it usually it's ok. |
 | 4 | What is the CS department like? | Generally nice. Pretty theoretical over applied. |

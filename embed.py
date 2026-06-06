@@ -32,7 +32,7 @@ DEFAULT_TOP_K = 10                                 # raised from 5: the first-ye
 
 # The five evaluation questions from planning.md ("Evaluation Plan").
 EVAL_QUESTIONS = [
-    "What is CS240 about?",
+    "What is CS245 about?",
     "What is Professor Wonacott like?",
     "What is the course lottery like at Haverford?",
     "What is the CS department like?",

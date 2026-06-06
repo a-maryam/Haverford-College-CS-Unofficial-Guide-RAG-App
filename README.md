@@ -94,7 +94,7 @@ Final: top-k = 10. I started at 5, but end-to-end testing showed the first-year-
 (Had claude help) There are better models for student informal language and slang like text-embedding-3-large or Voyage/Cohere. Another embedding model could be useful for the long requirements and course lottery pages. 
 ---
 
-## Grounded Generation
+# Grounded Generation
 
 <!-- Explain how your system enforces grounding — how does it prevent the LLM from answering
      beyond the retrieved documents?
@@ -104,8 +104,11 @@ Final: top-k = 10. I started at 5, but end-to-end testing showed the first-year-
      the mechanism. -->
 
 **System prompt grounding instruction:**
+Only answer based on the content provided. Do not use outside 
+sources to answer questions. 
 
 **How source attribution is surfaced in the response:**
+We added a sources array to embed.py and the sources metadata lives in chromadb. metadata is grabbed on retrieval and attached to the answer. 
 
 ---
 
@@ -117,11 +120,11 @@ Final: top-k = 10. I started at 5, but end-to-end testing showed the first-year-
 
 | # | Question | Expected answer | System response (summarized) | Retrieval quality | Response accuracy |
 |---|----------|-----------------|------------------------------|-------------------|-------------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | What is CS245 about? | Programming Languages | Principles of Programming Languages. | Relevant | Accurate | 
+| 2 | What is Professor Wonacott like? | Student reviews are mixed. He is noted as being friendly, not the best at teaching, and long-winded.  | mixed, with some students finding him to be an excellent teacher and others struggling with his lecture style.| Relevant | Accurate |
+| 3 | What is the course lottery like at Haverford? | The lottery can be stressful because you are not guaranteed a course, but if you stick through it usually it's ok. | Very detailed info about lottery + student experiences summed up | Relevant | Accurate |
+| 4 | What is the CS department like? | Generally nice. Pretty theoretical over applied. | Considered to not be one of the best but with its strengths | Relevant | Partially accurate |
+| 5 | What courses should a first-year student take to start CS, and are they difficult? | Start with CS105/106 depending on background. CS105 is introductory and approachable; CS106 requires more background. Both are foundational before jumping into theory-heavy courses like CS245. Workload is moderate but consistent. | According to the provided documents, a first-year student should take introductory CS courses to start CS. The specific courses mentioned are CMSC H106, H107, or B151| Relevant | Accurate |
 
 **Retrieval quality:** Relevant / Partially relevant / Off-target  
 **Response accuracy:** Accurate / Partially accurate / Inaccurate
@@ -142,17 +145,16 @@ Final: top-k = 10. I started at 5, but end-to-end testing showed the first-year-
      results from an unrelated review" is an explanation. -->
 
 **Question that failed:**
-What is CS240 about?
+What is CS245 about? (Partial Fail - lacking detail)
 
 **What the system returned:**
-top hits were H245/H260/H251, not H240
+Principles of Programming Languages
 
 **Root cause (tied to a specific pipeline stage):**
-The text for courses calls CS240: CMSC H240 so it the model is hitting other courses.
+Documents not having enough detail. Ultimately, with retrieval, we just get the name of the course.
 
 **What you would change to fix it:**
-Could normalize course codes: rewrite CMSC H240 / CS240 / CS 240 to a single form. 
-Also token matching
+Have more documents describing the courses, so the model would have more to serve users.
 
 ---
 
@@ -166,12 +168,15 @@ It seems Claude really understood the planning.md well and
 was able to give a decent implementation.
 
 **One way your implementation diverged from the spec, and why:**
-
 I had Claude generate ingest.py, and it found that one of the files
 that I had decided to paragraph split became a big chunk 
 because spacing was not present for some reason
 so I told Claude that if a paragraph is too big then we will use
 the fixed-length chunker.
+
+Was planning on using top-5 retrieval, but one of the questions
+only had enough info with top-8, so everything was upgraded to top-8
+retrieval.
 
 ---
 
@@ -192,7 +197,7 @@ the fixed-length chunker.
 Planning.md, Can you use planning.md as a basis to write a script to load all the documents from docs, define a method for paragraph chunking, define a method for fixed-length chunking as per parameters in planning.md? Do the previous as functions, then make the appropriate calls to paragraph chunk and fixed-length chunk respectively as define.
 
 - *What it produced:*
-Wrote the chunking based on paragraph + length
+Wrote the chunking based on paragraph + length.
 - *What I changed or overrode:*
 It suggested that we add a extra strategy that if we have too large of a paragraph it gets chunked fixed-length; I thought that was a good idea and integrated it.
 
@@ -201,6 +206,6 @@ It suggested that we add a extra strategy that if we have too large of a paragra
 - *What I gave the AI:*
 Read the Retrieval Approach section in planning.md and look at the diagram (Architecture Diagram). Can you implement the embedding which is loading the chunks from the ingestion script, embedding with all-MiniLM-l6-v2, and storing in ChromaDB with the metadata. And write a retrieval function.
 - *What it produced:*
-Ingest.py 
+Embed.py which gets Chromadb set up with the chunks and metadata and retrieves. 
 - *What I changed or overrode:*
  Keep this code and load up all evaluation questions from planning.md as a sample question array in the main

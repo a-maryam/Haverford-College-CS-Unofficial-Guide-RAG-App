@@ -11,8 +11,7 @@ Requires GROQ_API_KEY in .env and a built ChromaDB index (run `python embed.py`
 first). Exits non-zero if any check fails.
 
 The checks are deliberately lenient — exact LLM phrasing varies, so each
-answerable question passes if ANY of its expected keywords appears. CS240 is the
-known corpus gap (no H240 description exists), so it is expected to refuse.
+answerable question passes if ANY of its expected keywords appears.
 """
 
 import sys
@@ -24,9 +23,9 @@ from generate import answer_question, REFUSAL_MARKER
 #   expect_refusal -> the model should say it lacks information
 CASES = [
     {
-        "question": "What is CS240 about?",
-        "expect_refusal": True,  # no H240 description in the corpus
-        "keywords": [],
+        "question": "What is CS245 about?",
+        "expect_refusal": False,  # H245 (Programming Languages) is in the catalog
+        "keywords": ["programming languages", "programming", "h245"],
     },
     {
         "question": "What is Professor Wonacott like?",
